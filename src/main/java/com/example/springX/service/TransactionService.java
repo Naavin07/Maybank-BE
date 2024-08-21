@@ -3,9 +3,11 @@ package com.example.springX.service;
 import com.example.springX.entity.Transaction;
 import com.example.springX.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,7 +26,7 @@ public class TransactionService {
         return null;
     }
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public Page<Transaction> search(Pageable pageable, Specification<Transaction> transactionSpecification) {
+        return transactionRepository.findAll(transactionSpecification, pageable);
     }
 }
