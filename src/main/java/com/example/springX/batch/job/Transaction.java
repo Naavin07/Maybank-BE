@@ -2,6 +2,7 @@ package com.example.springX.batch.job;
 
 import com.example.springX.batch.mapper.TransactionMapper;
 import com.example.springX.batch.processor.TransactionProcessor;
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -9,7 +10,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -36,11 +37,15 @@ public class Transaction {
     }
 
     @Bean
-    public Step step1(PlatformTransactionManager transactionManager, FlatFileItemReader<com.example.springX.entity.Transaction> flatFileItemReader) {
+    public Step step1(PlatformTransactionManager transactionManager, EntityManagerFactory entityManagerFactory, FlatFileItemReader<com.example.springX.entity.Transaction> flatFileItemReader) {
+
+        JpaItemWriter<com.example.springX.entity.Transaction> transactionJpaItemWriter = new JpaItemWriter<>();
+        transactionJpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+
         return new StepBuilder("step1", jobRepository).<com.example.springX.entity.Transaction, com.example.springX.entity.Transaction>chunk(100, transactionManager)
                 .reader(flatFileItemReader)
                 .processor(new TransactionProcessor())
-                .writer(new JdbcBatchItemWriter<>())
+                .writer(transactionJpaItemWriter)
                 .build();
     }
 
