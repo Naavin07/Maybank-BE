@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/import")
@@ -39,8 +41,12 @@ public class ImportController {
     })
     ResponseEntity<Object> importTransactionFile(@RequestPart("file") MultipartFile file) throws IOException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         File temp_file = new File(Objects.requireNonNull(file.getOriginalFilename()));
-        file.transferTo(temp_file);
+        if(!temp_file.exists()) {
+            temp_file.createNewFile();
+        }
+        file.transferTo(Path.of(temp_file.getAbsolutePath()));
         JobParameters jobParameters = new JobParametersBuilder()
+                .addString("id", UUID.randomUUID().toString())
                 .addString("filePath", temp_file.getAbsolutePath())
                 .toJobParameters();
         jobLauncher.run(importTransactionJob, jobParameters);
