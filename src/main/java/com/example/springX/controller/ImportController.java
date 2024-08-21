@@ -17,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/import")
@@ -36,8 +38,10 @@ public class ImportController {
             @ApiResponse(responseCode = "204", description = "No Content")
     })
     ResponseEntity<Object> importTransactionFile(@RequestPart("file") MultipartFile file) throws IOException, JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        File temp_file = new File(Objects.requireNonNull(file.getOriginalFilename()));
+        file.transferTo(temp_file);
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("filePath", file.getResource().getFile().getAbsolutePath())
+                .addString("filePath", temp_file.getAbsolutePath())
                 .toJobParameters();
         jobLauncher.run(importTransactionJob, jobParameters);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
