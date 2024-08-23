@@ -45,8 +45,8 @@ public class TransactionController {
         return new ResponseEntity<>(transactionService.search(pageable, specification), HttpStatus.OK);
     }
 
-    @PatchMapping("/{accountNumber}")
-    public ResponseEntity<Transaction> updateTransactionDescription(@PathVariable Long accountNumber, @RequestParam String description) {
+    @PutMapping("/transaction/{id}")
+    public ResponseEntity<Transaction> updateTransactionDescription(@PathVariable Long accountNumber, @RequestBody String description) {
         Transaction updatedTransaction = transactionService.updateTransactionDescription(accountNumber, description);
         if (updatedTransaction != null) {
             return ResponseEntity.ok(updatedTransaction);

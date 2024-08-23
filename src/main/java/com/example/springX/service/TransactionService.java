@@ -21,6 +21,7 @@ public class TransactionService {
         if (transaction.isPresent()) {
             Transaction trx = transaction.get();
             trx.setDescription(description);
+            trx.setVersion(trx.getVersion()+1);
             return transactionRepository.save(trx);
         }
         return null;

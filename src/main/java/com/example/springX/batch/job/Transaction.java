@@ -38,7 +38,6 @@ public class Transaction {
 
     @Bean
     public Step step1(PlatformTransactionManager transactionManager, EntityManagerFactory entityManagerFactory, FlatFileItemReader<com.example.springX.entity.Transaction> flatFileItemReader) {
-
         JpaItemWriter<com.example.springX.entity.Transaction> transactionJpaItemWriter = new JpaItemWriter<>();
         transactionJpaItemWriter.setEntityManagerFactory(entityManagerFactory);
 

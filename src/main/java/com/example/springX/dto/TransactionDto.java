@@ -1,10 +1,7 @@
-package com.example.springX.entity;
+package com.example.springX.dto;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,12 +9,7 @@ import java.time.LocalTime;
 
 @Data
 @Builder
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TransactionDto {
     private Long id;
 
     private String accountNumber;
@@ -31,7 +23,4 @@ public class Transaction {
     private LocalTime trxTime;
 
     private String customerId;
-
-    @Version
-    private Integer version;
 }
